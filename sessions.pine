@@ -1,0 +1,38 @@
+//@version=5
+indicator("Forex Market Sessions", overlay=true)
+
+// Define session start and end times in UTC
+session_sydney_start = input("22:00-00:00", title="Sydney Session Start Time (UTC)")
+session_sydney_end = input("6:00-00:00", title="Sydney Session End Time (UTC)")
+session_tokyo_start = input("0:00-00:00", title="Tokyo Session Start Time (UTC)")
+session_tokyo_end = input("8:00-00:00", title="Tokyo Session End Time (UTC)")
+session_london_start = input("8:00-00:00", title="London Session Start Time (UTC)")
+session_london_end = input("16:00-00:00", title="London Session End Time (UTC)")
+session_newyork_start = input("13:00-00:00", title="New York Session Start Time (UTC)")
+session_newyork_end = input("21:00-00:00", title="New York Session End Time (UTC)")
+
+// Convert session times to local timezone
+sydney_start = security(syminfo.tickerid, "D", timestamp(session_sydney_start))
+sydney_end = security(syminfo.tickerid, "D", timestamp(session_sydney_end))
+tokyo_start = security(syminfo.tickerid, "D", timestamp(session_tokyo_start))
+tokyo_end = security(syminfo.tickerid, "D", timestamp(session_tokyo_end))
+london_start = security(syminfo.tickerid, "D", timestamp(session_london_start))
+london_end = security(syminfo.tickerid, "D", timestamp(session_london_end))
+newyork_start = security(syminfo.tickerid, "D", timestamp(session_newyork_start))
+newyork_end = security(syminfo.tickerid, "D", timestamp(session_newyork_end))
+
+// Calculate session momentum
+session_sydney_momentum = request.security(syminfo.tickerid, "D", close[sydney_end]) - request.security(syminfo.tickerid, "D", close[sydney_start])
+session_tokyo_momentum = request.security(syminfo.tickerid, "D", close[tokyo_end]) - request.security(syminfo.tickerid, "D", close[tokyo_start])
+session_london_momentum = request.security(syminfo.tickerid, "D", close[london_end]) - request.security(syminfo.tickerid, "D", close[london_start])
+session_newyork_momentum = request.security(syminfo.tickerid, "D", close[newyork_end]) - request.security(syminfo.tickerid, "D", close[newyork_start])
+
+// Define signal colors
+color_green = color.green
+color_red = color.red
+
+// Plot signals for each session
+plot(signal = session_sydney_momentum > 0 ? 1 : session_sydney_momentum < 0 ? -1 : 0, color=color_green, linewidth=2, title="Sydney Momentum Signal")
+plot(signal = session_tokyo_momentum > 0 ? 1 : session_tokyo_momentum < 0 ? -1 : 0, color=color_green, linewidth=2, title="Tokyo Momentum Signal")
+plot(signal = session_london_momentum > 0 ? 1 : session_london_momentum < 0 ? -1 : 0, color=color_green, linewidth=2, title="London Momentum Signal")
+plot(signal = session_newyork_momentum > 0 ? 1 : session_newyork_momentum < 0 ? -1 : 0, color=color_green, linewidth=2, title="New York Momentum Signal")
